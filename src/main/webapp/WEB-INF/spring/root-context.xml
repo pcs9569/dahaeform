@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- root-context.xml -> web.xml에 등록되어 있음 -->
+
+	<!-- 1) DB연결 (DBOpen클래스와 비슷) 
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+		<property name="driverClass"	value="com.mysql.jdbc.Driver"></property>
+		<property name="url"			value="jdbc:mysql://localhost:3306/soldesk?serverTimezone=UTC"></property>
+		<property name="username"    	value="root"></property>
+		<property name="password"    	value="1234"></property>
+	</bean> -->
+	
+	<!-- MariaDB연결  -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+		<property name="driverClass"	value="org.mariadb.jdbc.Driver"></property>
+		<property name="url"			value="jdbc:mariadb://localhost:4406/soldesk?characterEncoding=utf-8"></property>
+		<property name="username"    	value="root"></property>
+		<property name="password"    	value="1234"></property>
+	</bean>
+
+	<!-- 2) mapper(notice.xml)을 스프링빈으로 주입받아 객체 생성 -->
+	<bean id="sqlSessionFactory" 			class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource"      	ref="dataSource" />
+		<property name="mapperLocations"	value="classpath:/kr/co/dahaeform/**/*.xml" />
+		<property name="typeAliasesPackage" value="kr.co.dahaeform"></property>		
+	</bean>
+
+
+	<!-- 3) 1)과 2)에서 생성된 스프링빈을 이용해서 SQL실행 객체 생성. PrepareStatement 역할 -->
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"></constructor-arg>
+    </bean>
+	
+</beans>
